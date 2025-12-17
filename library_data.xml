@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<library>
+  <metadata>
+    <export_date>2025-12-17T18:36:04.500937</export_date>
+    <total_books>6</total_books>
+    <total_readers>3</total_readers>
+    <version>1.0</version>
+  </metadata>
+  <books>
+    <book>
+      <title>Война и мир</title>
+      <isbn>978-5-389-07435-2</isbn>
+      <year>1869</year>
+      <available>false</available>
+      <author>
+        <name>Лев Толстой</name>
+        <country>Россия</country>
+      </author>
+    </book>
+    <book>
+      <title>Анна Каренина</title>
+      <isbn>978-5-699-40115-1</isbn>
+      <year>1877</year>
+      <available>true</available>
+      <author>
+        <name>Лев Толстой</name>
+        <country>Россия</country>
+      </author>
+    </book>
+    <book>
+      <title>Преступление и наказание</title>
+      <isbn>978-5-17-060692-6</isbn>
+      <year>1866</year>
+      <available>true</available>
+      <author>
+        <name>Фёдор Достоевский</name>
+        <country>Россия</country>
+      </author>
+    </book>
+    <book>
+      <title>Идиот</title>
+      <isbn>978-5-17-090690-3</isbn>
+      <year>1869</year>
+      <available>true</available>
+      <author>
+        <name>Фёдор Достоевский</name>
+        <country>Россия</country>
+      </author>
+    </book>
+    <book>
+      <title>Вишневый сад</title>
+      <isbn>978-5-08-005407-7</isbn>
+      <year>1904</year>
+      <available>true</available>
+      <author>
+        <name>Антон Чехов</name>
+        <country>Россия</country>
+      </author>
+    </book>
+    <book>
+      <title>Я, робот</title>
+      <isbn>978-5-699-30670-2</isbn>
+      <year>1950</year>
+      <available>false</available>
+      <author>
+        <name>Айзек Азимов</name>
+        <country>США</country>
+      </author>
+    </book>
+  </books>
+  <readers>
+    <reader>
+      <name>Иван</name>
+      <surname>Петров</surname>
+      <reader_id>R001</reader_id>
+    </reader>
+    <reader>
+      <name>Мария</name>
+      <surname>Сидорова</surname>
+      <reader_id>R002</reader_id>
+    </reader>
+    <reader>
+      <name>Алексей</name>
+      <surname>Иванов</surname>
+      <reader_id>R003</reader_id>
+    </reader>
+  </readers>
+  <library_cards>
+    <library_card>
+      <reader>
+        <reader_id>R001</reader_id>
+      </reader>
+      <borrowed_books>
+        <book_reference>
+          <isbn>978-5-389-07435-2</isbn>
+          <title>Война и мир</title>
+        </book_reference>
+      </borrowed_books>
+    </library_card>
+    <library_card>
+      <reader>
+        <reader_id>R002</reader_id>
+      </reader>
+      <borrowed_books>
+        <book_reference>
+          <isbn>978-5-699-30670-2</isbn>
+          <title>Я, робот</title>
+        </book_reference>
+      </borrowed_books>
+    </library_card>
+    <library_card>
+      <reader>
+        <reader_id>R003</reader_id>
+      </reader>
+      <borrowed_books/>
+    </library_card>
+  </library_cards>
+</library>

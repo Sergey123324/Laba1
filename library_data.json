@@ -1,0 +1,145 @@
+{
+  "books": [
+    {
+      "title": "Война и мир",
+      "author": {
+        "name": "Лев Толстой",
+        "country": "Россия"
+      },
+      "isbn": "978-5-389-07435-2",
+      "year": 1869,
+      "available": false
+    },
+    {
+      "title": "Анна Каренина",
+      "author": {
+        "name": "Лев Толстой",
+        "country": "Россия"
+      },
+      "isbn": "978-5-699-40115-1",
+      "year": 1877,
+      "available": true
+    },
+    {
+      "title": "Преступление и наказание",
+      "author": {
+        "name": "Фёдор Достоевский",
+        "country": "Россия"
+      },
+      "isbn": "978-5-17-060692-6",
+      "year": 1866,
+      "available": true
+    },
+    {
+      "title": "Идиот",
+      "author": {
+        "name": "Фёдор Достоевский",
+        "country": "Россия"
+      },
+      "isbn": "978-5-17-090690-3",
+      "year": 1869,
+      "available": true
+    },
+    {
+      "title": "Вишневый сад",
+      "author": {
+        "name": "Антон Чехов",
+        "country": "Россия"
+      },
+      "isbn": "978-5-08-005407-7",
+      "year": 1904,
+      "available": true
+    },
+    {
+      "title": "Я, робот",
+      "author": {
+        "name": "Айзек Азимов",
+        "country": "США"
+      },
+      "isbn": "978-5-699-30670-2",
+      "year": 1950,
+      "available": false
+    },
+    {
+      "title": "Азбука",
+      "author": {
+        "name": "Корней",
+        "country": "Россия"
+      },
+      "isbn": "64663-37474",
+      "year": 2000,
+      "available": true
+    }
+  ],
+  "readers": [
+    {
+      "name": "Иван",
+      "surname": "Петров",
+      "reader_id": "R001"
+    },
+    {
+      "name": "Мария",
+      "surname": "Сидорова",
+      "reader_id": "R002"
+    },
+    {
+      "name": "Алексей",
+      "surname": "Иванов",
+      "reader_id": "R003"
+    }
+  ],
+  "library_cards": [
+    {
+      "reader": {
+        "name": "Иван",
+        "surname": "Петров",
+        "reader_id": "R001"
+      },
+      "borrowed_books": [
+        {
+          "title": "Война и мир",
+          "author": {
+            "name": "Лев Толстой",
+            "country": "Россия"
+          },
+          "isbn": "978-5-389-07435-2",
+          "year": 1869,
+          "available": false
+        }
+      ]
+    },
+    {
+      "reader": {
+        "name": "Мария",
+        "surname": "Сидорова",
+        "reader_id": "R002"
+      },
+      "borrowed_books": [
+        {
+          "title": "Я, робот",
+          "author": {
+            "name": "Айзек Азимов",
+            "country": "США"
+          },
+          "isbn": "978-5-699-30670-2",
+          "year": 1950,
+          "available": false
+        }
+      ]
+    },
+    {
+      "reader": {
+        "name": "Алексей",
+        "surname": "Иванов",
+        "reader_id": "R003"
+      },
+      "borrowed_books": []
+    }
+  ],
+  "metadata": {
+    "export_date": "2025-12-17T18:32:06.181253",
+    "total_books": 7,
+    "total_readers": 3,
+    "version": "1.0"
+  }
+}

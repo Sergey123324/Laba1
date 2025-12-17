@@ -12,3 +12,6 @@ class BookNotAvailableError(LibraryError):
 
 class ReaderAlreadyExistsError(LibraryError):
     pass
+
+class ReaderNotFoundError(LibraryError):
+    pass

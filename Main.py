@@ -1,34 +1,51 @@
 from library import Library
-from librarycard import LibraryCard
 from reader import Reader
 from book import Book
 from author import Author
-from Errors import *
+from json_handler import JSONHandler
+from xml_handler import XMLHandler
+import Errors
 
 
 def main():
     library = Library()
 
-    init_test_data(library)
+    print("=" * 50)
+    print("БИБЛИОТЕЧНАЯ СИСТЕМА")
+    print("=" * 50)
+
+    load_choice = input("Хотите загрузить данные из файла? (y/n): ").strip().lower()
+    if load_choice == 'y':
+        format_choice = input("Из какого формата загрузить? (1-JSON, 2-XML): ").strip()
+        if format_choice == '1':
+            JSONHandler.load_library_data(library)
+        elif format_choice == '2':
+            XMLHandler.load_library_data(library)
+
+    if not library.books:
+        init_test_data(library)
 
     while True:
         print("\n" + "=" * 50)
-        print(" БИБЛИОТЕЧНАЯ СИСТЕМА")
+        print("МЕНЮ")
         print("=" * 50)
-        print("1.  Добавить книгу")
-        print("2.  Найти книгу")
-        print("3.  Зарегистрировать читателя")
-        print("4.  Выдать книгу")
-        print("5.  Вернуть книгу")
-        print("6.  Показать доступные книги")
-        print("7.  Показать книги на руках у читателя")
-        print("8.  Сохранить данные в JSON (для лабораторной)")
-        print("9.  Сохранить данные в XML (для лабораторной)")
-        print("0.  Выход")
+        print("1. Добавить книгу")
+        print("2. Найти книгу")
+        print("3. Зарегистрировать читателя")
+        print("4. Выдать книгу")
+        print("5. Вернуть книгу")
+        print("6. Показать доступные книги")
+        print("7. Показать всех читателей")
+        print("8. Показать книги на руках у читателя")
+        print("9. Сохранить данные в JSON")
+        print("10. Сохранить данные в XML")
+        print("11. Загрузить данные из JSON")
+        print("12. Загрузить данные из XML")
+        print("0. Выход")
         print("-" * 50)
 
         try:
-            choice = input("Выберите действие (0-9): ").strip()
+            choice = input("Выберите действие (0-12): ").strip()
 
             if choice == "1":
                 add_book_flow(library)
@@ -47,26 +64,40 @@ def main():
             elif choice == "8":
                 show_reader_books_flow(library)
             elif choice == "9":
-                save_to_json_flow(library)
+                JSONHandler.save_library_data(library)
+            elif choice == "10":
+                XMLHandler.save_library_data(library)
+            elif choice == "11":
+                JSONHandler.load_library_data(library)
+            elif choice == "12":
+                XMLHandler.load_library_data(library)
             elif choice == "0":
-                print("До свидания! ")
+                save_before_exit = input("Сохранить данные перед выходом? (y/n): ").strip().lower()
+                if save_before_exit == 'y':
+                    format_choice = input("В каком формате сохранить? (1-JSON, 2-XML, 3-оба): ").strip()
+                    if format_choice in ['1', '3']:
+                        JSONHandler.save_library_data(library)
+                    if format_choice in ['2', '3']:
+                        XMLHandler.save_library_data(library)
+                print("До свидания!")
                 break
             else:
-                print(" Неверный выбор. Введите число от 0 до 9.")
+                print("Неверный выбор. Введите число от 0 до 12.")
 
         except KeyboardInterrupt:
             print("\n\nПрограмма завершена пользователем.")
             break
         except Exception as e:
-            print(f"\n  Непредвиденная ошибка: {type(e).__name__}: {e}")
+            print(f"\nНепредвиденная ошибка: {type(e).__name__}: {e}")
             print("Программа продолжает работу...")
+
 
 def add_book_flow(library):
     print("\n--- Добавление новой книги ---")
     try:
         title = input("Название книги: ").strip()
         if not title:
-            print(" Название не может быть пустым!")
+            print("Название не может быть пустым!")
             return
 
         author_name = input("Имя автора: ").strip()
@@ -74,7 +105,7 @@ def add_book_flow(library):
 
         isbn = input("ISBN (например, 978-5-389-07435-2): ").strip()
         if not isbn:
-            print(" ISBN обязателен!")
+            print("ISBN обязателен!")
             return
 
         year_str = input("Год издания: ").strip()
@@ -83,7 +114,7 @@ def add_book_flow(library):
             if year < 0 or year > 2025:
                 raise ValueError("Некорректный год")
         except ValueError:
-            print(" Год должен быть числом!")
+            print("Год должен быть числом!")
             return
 
         author = Author(author_name, author_country)
@@ -91,10 +122,10 @@ def add_book_flow(library):
 
         result = library.add_book(book)
         if result:
-            print(f" Книга '{title}' успешно добавлена!")
+            print(f"Книга '{title}' успешно добавлена!")
 
     except Exception as e:
-        print(f" Ошибка при добавлении книги: {e}")
+        print(f"Ошибка при добавлении книги: {e}")
 
 
 def search_book_flow(library):
@@ -102,17 +133,19 @@ def search_book_flow(library):
     try:
         search_term = input("Введите название книги или автора: ").strip()
         if not search_term:
-            print(" Введите поисковый запрос!")
+            print("Введите поисковый запрос!")
             return
 
         found_books = library.search_book(search_term)
         if found_books:
-            print(f"\n Найдено {len(found_books)} книг")
+            print(f"\nНайдено {len(found_books)} книг:")
+            for i, book in enumerate(found_books, 1):
+                print(f"{i}. {book.info()}")
         else:
-            print(" По вашему запросу ничего не найдено")
+            print("По вашему запросу ничего не найдено")
 
     except Exception as e:
-        print(f" Ошибка при поиске: {e}")
+        print(f"Ошибка при поиске: {e}")
 
 
 def register_reader_flow(library):
@@ -122,25 +155,23 @@ def register_reader_flow(library):
         surname = input("Фамилия читателя: ").strip()
 
         if not name or not surname:
-            print(" Имя и фамилия обязательны!")
+            print("Имя и фамилия обязательны!")
             return
 
         reader_id = input("ID читателя (например, R001): ").strip()
         if not reader_id:
-            print(" ID обязателен!")
+            print("ID обязателен!")
             return
 
         reader = Reader(name, surname, reader_id)
 
         card = library.add_reader(reader)
         if card:
-            print(f" Читатель {name} {surname} успешно зарегистрирован!")
-            print(f" Выдан читательский билет")
+            print(f"Читатель {name} {surname} успешно зарегистрирован!")
+            print(f"Выдан читательский билет")
 
-    except ReaderAlreadyExistsError as e:
-        print(f" {e}")
     except Exception as e:
-        print(f" Ошибка при регистрации: {e}")
+        print(f"Ошибка при регистрации: {e}")
 
 
 def borrow_book_flow(library):
@@ -148,8 +179,12 @@ def borrow_book_flow(library):
     try:
         available = library.list_available_books()
         if not available:
-            print(" Нет доступных книг для выдачи!")
+            print("Нет доступных книг для выдачи!")
             return
+
+        print("\nДоступные книги:")
+        for i, book in enumerate(available, 1):
+            print(f"{i}. {book.title} - {book.author.name}")
 
         book_index = input("\nВведите номер книги для выдачи (или 0 для отмены): ").strip()
         if book_index == "0":
@@ -159,54 +194,66 @@ def borrow_book_flow(library):
         try:
             book_index = int(book_index) - 1
             if book_index < 0 or book_index >= len(available):
-                print(" Неверный номер книги!")
+                print("Неверный номер книги!")
                 return
             selected_book = available[book_index]
         except ValueError:
-            print(" Введите номер!")
+            print("Введите номер!")
             return
 
         reader_id = input("Введите ID читателя: ").strip()
 
-        if hasattr(library, 'borrow_book'):
-            success = library.borrow_book(reader_id, selected_book.title)
-        else:
-            print("  Метод выдачи книги пока не реализован в библиотеке")
-            print(f"Книга '{selected_book.title}' будет выдана позже")
-            success = True
-
-        if success:
-            print(f" Книга '{selected_book.title}' выдана читателю ID: {reader_id}")
+        success = library.borrow_book(reader_id, selected_book.title)
 
     except Exception as e:
-        print(f" Ошибка при выдаче книги: {e}")
+        print(f"Ошибка при выдаче книги: {e}")
 
 
 def return_book_flow(library):
     print("\n--- Возврат книги ---")
     try:
-
-        book_title = input("Введите название возвращаемой книги: ").strip()
-        if not book_title:
-            print(" Введите название книги!")
+        reader_id = input("Введите ID читателя: ").strip()
+        if not reader_id:
+            print("Введите ID читателя!")
             return
 
-        print("  Функция возврата книги требует реализации в классе Library")
-        print("Сейчас книга будет просто отмечена как доступная")
+        reader_card = None
+        for card in library.cards:
+            if card.reader.reader_id == reader_id:
+                reader_card = card
+                break
 
-        for book in library.books:
-            if book.title.lower() == book_title.lower():
-                if not book.available:
-                    book.available = True
-                    print(f" Книга '{book.title}' возвращена в библиотеку")
-                else:
-                    print(f"  Книга '{book.title}' уже была в библиотеке")
+        if not reader_card:
+            print(f"Читатель с ID {reader_id} не найден!")
+            return
+
+        if not reader_card.borrowed_books:
+            print("У читателя нет книг для возврата!")
+            return
+
+        print("\nКниги на руках у читателя:")
+        for i, book in enumerate(reader_card.borrowed_books, 1):
+            print(f"{i}. {book.title}")
+
+        book_index = input("\nВведите номер книги для возврата (или 0 для отмены): ").strip()
+        if book_index == "0":
+            print("Отмена операции.")
+            return
+
+        try:
+            book_index = int(book_index) - 1
+            if book_index < 0 or book_index >= len(reader_card.borrowed_books):
+                print("Неверный номер книги!")
                 return
+            selected_book = reader_card.borrowed_books[book_index]
+        except ValueError:
+            print("Введите номер!")
+            return
 
-        print(f" Книга '{book_title}' не найдена в библиотеке")
+        success = library.return_book(reader_id, selected_book.title)
 
     except Exception as e:
-        print(f" Ошибка при возврате книги: {e}")
+        print(f"Ошибка при возврате книги: {e}")
 
 
 def list_available_books_flow(library):
@@ -214,24 +261,26 @@ def list_available_books_flow(library):
     try:
         available = library.list_available_books()
         if not available:
-            print(" Нет доступных книг")
+            print("Нет доступных книг")
         else:
-            print(f" Всего доступно: {len(available)} книг")
+            print(f"Всего доступно: {len(available)} книг")
+            for i, book in enumerate(available, 1):
+                print(f"{i}. {book.info()}")
     except Exception as e:
-        print(f" Ошибка: {e}")
+        print(f"Ошибка: {e}")
 
 
 def list_readers_flow(library):
     print("\n--- Зарегистрированные читатели ---")
     try:
         if not library.readers:
-            print(" Нет зарегистрированных читателей")
+            print("Нет зарегистрированных читателей")
         else:
-            print(f"👥 Всего читателей: {len(library.readers)}")
+            print(f"Всего читателей: {len(library.readers)}")
             for i, reader in enumerate(library.readers, 1):
                 print(f"{i}. {reader.surname} {reader.name} (ID: {reader.reader_id})")
     except Exception as e:
-        print(f" Ошибка: {e}")
+        print(f"Ошибка: {e}")
 
 
 def show_reader_books_flow(library):
@@ -239,64 +288,21 @@ def show_reader_books_flow(library):
     try:
         reader_id = input("Введите ID читателя: ").strip()
 
-        for card in library.cards if hasattr(library, 'cards') else []:
+        for card in library.cards:
             if card.reader.reader_id == reader_id:
                 card.show_borrowed_books()
                 return
 
-        print(f" Читатель с ID {reader_id} не найден или у него нет читательского билета")
+        print(f"Читатель с ID {reader_id} не найден")
 
     except Exception as e:
-        print(f" Ошибка: {e}")
-
-
-def save_to_json_flow(library):
-    print("\n--- Сохранение данных в JSON ---")
-    try:
-        import json
-        import os
-
-        data = {
-            "books": [],
-            "readers": []
-        }
-
-        for book in library.books:
-            book_data = {
-                "title": book.title,
-                "author": {
-                    "name": book.author.name,
-                    "country": book.author.country
-                },
-                "isbn": book.isbn,
-                "year": book.year,
-                "available": book.available
-            }
-            data["books"].append(book_data)
-
-        for reader in library.readers:
-            reader_data = {
-                "name": reader.name,
-                "surname": reader.surname,
-                "reader_id": reader.reader_id
-            }
-            data["readers"].append(reader_data)
-
-        filename = "library_data.json"
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-
-        print(f" Данные сохранены в файл: {filename}")
-        print(f" Статистика: {len(data['books'])} книг, {len(data['readers'])} читателей")
-
-    except PermissionError:
-        print(" Ошибка: нет прав для записи файла")
-    except Exception as e:
-        print(f" Ошибка при сохранении: {e}")
+        print(f"Ошибка: {e}")
 
 
 def init_test_data(library):
     try:
+        print("\n--- Создание тестовых данных ---")
+
         authors = [
             Author("Лев Толстой", "Россия"),
             Author("Фёдор Достоевский", "Россия"),
@@ -325,16 +331,15 @@ def init_test_data(library):
         for reader in readers:
             library.add_reader(reader)
 
-        if hasattr(library, 'borrow_book'):
-            library.borrow_book("R001", "Война и мир")
-            library.borrow_book("R002", "Я, робот")
+        library.borrow_book("R001", "Война и мир")
+        library.borrow_book("R002", "Я, робот")
 
-        print(" Тестовые данные загружены")
-        print(f" Книг в библиотеке: {len(library.books)}")
-        print(f" Читателей: {len(library.readers)}")
+        print("Тестовые данные созданы:")
+        print(f"  Книг в библиотеке: {len(library.books)}")
+        print(f"  Читателей: {len(library.readers)}")
 
     except Exception as e:
-        print(f"⚠️  Ошибка загрузки тестовых данных: {e}")
+        print(f"Ошибка создания тестовых данных: {e}")
 
 
 if __name__ == "__main__":
