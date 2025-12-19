@@ -8,17 +8,14 @@ class XMLHandler:
     @staticmethod
     def save_library_data(library, filename="library_data.xml"):
         try:
-            # Создаем корневой элемент
             root = ET.Element("library")
 
-            # Добавляем метаданные
             metadata = ET.SubElement(root, "metadata")
             ET.SubElement(metadata, "export_date").text = datetime.now().isoformat()
             ET.SubElement(metadata, "total_books").text = str(len(library.books))
             ET.SubElement(metadata, "total_readers").text = str(len(library.readers))
             ET.SubElement(metadata, "version").text = "1.0"
 
-            # Добавляем книги
             books_elem = ET.SubElement(root, "books")
             for book in library.books:
                 book_elem = ET.SubElement(books_elem, "book")
@@ -31,7 +28,6 @@ class XMLHandler:
                 ET.SubElement(author_elem, "name").text = book.author.name
                 ET.SubElement(author_elem, "country").text = book.author.country
 
-            # Добавляем читателей
             readers_elem = ET.SubElement(root, "readers")
             for reader in library.readers:
                 reader_elem = ET.SubElement(readers_elem, "reader")
@@ -39,7 +35,6 @@ class XMLHandler:
                 ET.SubElement(reader_elem, "surname").text = reader.surname
                 ET.SubElement(reader_elem, "reader_id").text = reader.reader_id
 
-            # Добавляем библиотечные карточки
             cards_elem = ET.SubElement(root, "library_cards")
             for card in library.cards:
                 card_elem = ET.SubElement(cards_elem, "library_card")
@@ -53,10 +48,8 @@ class XMLHandler:
                     ET.SubElement(book_ref_elem, "isbn").text = book.isbn
                     ET.SubElement(book_ref_elem, "title").text = book.title
 
-            # Форматируем XML для читаемости
             xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
 
-            # Сохраняем в файл
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(xml_str)
 
@@ -80,12 +73,10 @@ class XMLHandler:
             tree = ET.parse(filename)
             root = tree.getroot()
 
-            # Очищаем текущие данные
             library.books.clear()
             library.readers.clear()
             library.cards.clear()
 
-            # Загружаем книги
             from author import Author
             from book import Book
 
@@ -106,7 +97,6 @@ class XMLHandler:
                     book.available = available
                     library.books.append(book)
 
-            # Загружаем читателей
             from reader import Reader
             from librarycard import LibraryCard
 
@@ -120,7 +110,6 @@ class XMLHandler:
                     reader = Reader(name, surname, reader_id)
                     library.readers.append(reader)
 
-            # Загружаем карточки и выданные книги
             cards_elem = root.find("library_cards")
             if cards_elem is not None:
                 for card_elem in cards_elem.findall("library_card"):
@@ -128,7 +117,6 @@ class XMLHandler:
                     if reader_id_elem is not None:
                         reader_id = reader_id_elem.text
 
-                        # Находим читателя
                         reader = None
                         for r in library.readers:
                             if r.reader_id == reader_id:
@@ -138,13 +126,11 @@ class XMLHandler:
                         if reader:
                             card = LibraryCard(reader)
 
-                            # Загружаем выданные книги
                             borrowed_books_elem = card_elem.find("borrowed_books")
                             if borrowed_books_elem is not None:
                                 for book_ref_elem in borrowed_books_elem.findall("book_reference"):
                                     isbn = book_ref_elem.find("isbn").text
 
-                                    # Находим книгу по ISBN
                                     for book in library.books:
                                         if book.isbn == isbn:
                                             card.borrowed_books.append(book)

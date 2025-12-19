@@ -9,7 +9,6 @@ class JSONHandler:
         try:
             data = library.to_dict()
 
-            # Добавляем метаданные
             data["metadata"] = {
                 "export_date": datetime.now().isoformat(),
                 "total_books": len(library.books),
@@ -40,12 +39,10 @@ class JSONHandler:
             with open(filename, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-            # Очищаем текущие данные
             library.books.clear()
             library.readers.clear()
             library.cards.clear()
 
-            # Восстанавливаем книги
             from author import Author
             from book import Book
 
@@ -60,7 +57,6 @@ class JSONHandler:
                 book.available = book_data.get("available", True)
                 library.books.append(book)
 
-            # Восстанавливаем читателей
             from reader import Reader
             from librarycard import LibraryCard
 
@@ -70,10 +66,8 @@ class JSONHandler:
                                 reader_data.get("reader_id", ""))
                 library.readers.append(reader)
 
-                # Создаем карточку
                 card = LibraryCard(reader)
 
-                # Восстанавливаем выданные книги
                 for card_data in data.get("library_cards", []):
                     if card_data["reader"]["reader_id"] == reader.reader_id:
                         for book_dict in card_data.get("borrowed_books", []):
